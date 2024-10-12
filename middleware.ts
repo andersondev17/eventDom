@@ -16,6 +16,11 @@ const ignoredRoutes = [
   '/api/uploadthing'
 ];
 
+// Define una interfaz que extiende ClerkMiddlewareAuth
+interface SafeClerkMiddlewareAuth {
+  userId?: string | null;
+}
+
 export default clerkMiddleware((auth, req) => {
   const isPublicRoute = publicRoutes.some(route => 
     req.nextUrl.pathname.startsWith(route) || req.nextUrl.pathname === route
@@ -28,8 +33,11 @@ export default clerkMiddleware((auth, req) => {
     return NextResponse.next();
   }
 
+  // Usa una aserción de tipo segura
+  const safeAuth = auth as SafeClerkMiddlewareAuth;
+
   // For protected routes, if the user is not signed in, redirect to sign-in
-  if (!auth.userId) {
+  if (!safeAuth.userId) {
     const signInUrl = new URL('/sign-in', req.url);
     signInUrl.searchParams.set('redirect_url', req.url);
     return NextResponse.redirect(signInUrl);
