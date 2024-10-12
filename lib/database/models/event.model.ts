@@ -1,7 +1,7 @@
 
 import { Schema, model, models } from "mongoose";
 //que propiedades tiene el modelo?
-export interface IEvent extends Document {
+export interface IEvent extends Omit<Document, 'location'> {// permite definirla nosotros mismos sin conflicto.
     _id: string;
     title: string;
     description?: string;
